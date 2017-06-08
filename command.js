@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 const dashdash = require("dashdash")
 const path = require("path")
-const util = require("util")
-const fs = require("fs")
 const chalk = require("chalk")
 const ora = require("ora")
 const { MeshbluConnectorUploader } = require("./src/uploader")
@@ -19,23 +17,24 @@ const CLI_OPTIONS = [
     help: "Print this help and exit.",
   },
   {
-    names: ["file"],
+    names: ["installers-path"],
     type: "string",
-    env: "MESHBLU_CONNECTOR_UPLOADER_FILE",
-    help: "File to upload",
+    env: "MESHBLU_CONNECTOR_INSTALLERS_PATH",
+    help: "Path with installers",
     helpArg: "PATH",
+    default: path.join("deploy", "installers"),
   },
   {
-    names: ["github-repository"],
+    names: ["github-slug"],
     type: "string",
-    env: "MESHBLU_CONNECTOR_GITHUB_REPOSITORY",
-    help: "Github repo name",
+    env: ["MESHBLU_CONNECTOR_GITHUB_SLUG", "TRAVIS_REPO_SLUG"],
+    help: "Github repo name (e.g. octoblu/meshblu-connector-say-hello)",
     helpArg: "REPO",
   },
   {
     names: ["github-release"],
     type: "string",
-    env: "MESHBLU_CONNECTOR_UPLOADER_GITHUB_RELEASE",
+    env: ["MESHBLU_CONNECTOR_UPLOADER_GITHUB_RELEASE", "TRAVIS_BRANCH"],
     help: "Github release to upload assets to",
     helpArg: "RELEASE",
   },
@@ -44,13 +43,6 @@ const CLI_OPTIONS = [
     type: "string",
     env: "MESHBLU_CONNECTOR_UPLOADER_GITHUB_TOKEN",
     help: "Github token",
-    helpArg: "TOKEN",
-  },
-  {
-    names: ["github-owner"],
-    type: "string",
-    env: "MESHBLU_CONNECTOR_UPLOADER_GITHUB_OWNER",
-    help: "Github owner",
     helpArg: "TOKEN",
   },
 ]
@@ -73,14 +65,8 @@ class MeshbluConnectorUploaderCommand {
       return {}
     }
 
-    if (!opts.connector_path) {
-      opts.connector_path = process.cwd()
-    }
-
-    opts.connector_path = path.resolve(opts.connector_path)
-
     if (opts.help) {
-      console.log(`usage: meshblu-connector-uploader-github [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true })}`)
+      console.log(`usage: meshblu-connector-uploader-github [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefault: true })}`)
       process.exit(0)
     }
 
@@ -94,16 +80,15 @@ class MeshbluConnectorUploaderCommand {
 
   async run() {
     const options = this.parseArgv({ argv: this.argv })
-    const { file, github_token, github_release, github_repository, github_owner } = options
+    const { installers_path, github_token, github_release, github_slug } = options
     var errors = []
-    if (!file) errors.push(new Error("MeshbluConnectorUploaderCommand requires --file or MESHBLU_CONNECTOR_UPLOADER_FILE"))
-    if (!github_release) errors.push(new Error("MeshbluConnectorUploaderCommand requires --github-release or MESHBLU_CONNETOR_UPLOADER_GITHUB_RELEASE"))
-    if (!github_token) errors.push(new Error("MeshbluConnectorUploaderCommand requires --github-token or MESHBLU_CONNETOR_UPLOADER_GITHUB_TOKEN"))
-    if (!github_repository) errors.push(new Error("MeshbluConnectorUploaderCommand requires --github-repository or MESHBLU_CONNETOR_UPLOADER_GITHUB_REPOSITORY"))
-    if (!github_owner) errors.push(new Error("MeshbluConnectorUploaderCommand requires --github-owner or MESHBLU_CONNETOR_UPLOADER_GITHUB_OWNER"))
+    if (!installers_path) errors.push(new Error("MeshbluConnectorUploaderCommand requires --installers-path or MESHBLU_CONNECTOR_UPLOADER_INSTALLERS_PATH"))
+    if (!github_release) errors.push(new Error("MeshbluConnectorUploaderCommand requires --github-release or MESHBLU_CONNECTOR_UPLOADER_GITHUB_RELEASE"))
+    if (!github_token) errors.push(new Error("MeshbluConnectorUploaderCommand requires --github-token or MESHBLU_CONNECTOR_UPLOADER_GITHUB_TOKEN"))
+    if (!github_slug) errors.push(new Error("MeshbluConnectorUploaderCommand requires --github-slug or MESHBLU_CONNECTOR_UPLOADER_GITHUB_SLUG"))
 
     if (errors.length) {
-      console.log(`usage: meshblu-connector-uploader-github [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true })}`)
+      console.log(`usage: meshblu-connector-uploader-github [OPTIONS]\noptions:\n${this.parser.help({ includeEnv: true, includeDefault: true })}`)
       errors.forEach(error => {
         console.error(chalk.red(error.message))
       })
@@ -113,11 +98,10 @@ class MeshbluConnectorUploaderCommand {
     const spinner = ora("Starting upload").start()
 
     const uploader = new MeshbluConnectorUploader({
-      file,
+      installersPath: installers_path,
       githubToken: github_token,
       githubRelease: github_release,
-      githubOwner: github_owner,
-      githubRepository: github_repository,
+      githubSlug: github_slug,
       spinner,
     })
     try {
