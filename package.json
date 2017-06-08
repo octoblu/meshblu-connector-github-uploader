@@ -1,0 +1,32 @@
+{
+  "name": "meshblu-connector-uploader-github",
+  "version": "1.0.0",
+  "description": "upload meshblu connector assets to github",
+  "main": "index.js",
+  "bin": {
+    "meshblu-connector-uploader-github": "./command.js"
+  },
+  "scripts": {
+    "test": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/octoblu/meshblu-connector-uploader-github.git"
+  },
+  "keywords": [
+    "meshblu",
+    "meshblu-connector"
+  ],
+  "author": "Octoblu <npm@octoblu.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/octoblu/meshblu-connector-uploader-github/issues"
+  },
+  "homepage": "https://github.com/octoblu/meshblu-connector-uploader-github#readme",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "dashdash": "^1.14.1",
+    "github": "^9.2.0",
+    "ora": "^1.2.0"
+  }
+}

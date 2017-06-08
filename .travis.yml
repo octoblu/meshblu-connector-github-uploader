@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+- '8'
+branches:
+  only:
+  - "/^v[0-9]/"
+after_success:
+- npm run coverage
+- npm run mocha:json
+- bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.octoblu.com/bash)
+deploy:
+  provider: npm
+  email: serveradmin@octoblu.com
+  api_key:
+    secure: EQAo8TeYwbOJb7QN3kClUwA8SuagoXR8DbQ2Oy7UvghPB1rqyloSb8G7iGEZ6/iPRFjnFjM+1GVVMo373NsonVYvgfHGytgNOj+0xJFIHYJR01WsZ0b9LUjz3Wj8dXp/kHeOlNC4j7Og9zxpfLibB376qfpreBOMVkenPLp25GbbM9uD0TcgEYjeJLUD2rCedy2GWlkq2Glw+/jYxBPNPDz7I+GS1NY7quhDRCMzriTqbYj1rPRfMNEzVVqp2Bwq+rvxYJ0YTXn+TOwcltuvppI2F+aS3lYTMQ+LqY6fTKo5Sfmk9By5gGaDEMunDn8XTFfrt5motwTOz+bonRyS//8csbHbIp0YqmfeV+gihiqExBjK2L96jj+57DHIFicjQk+IBOr7cR1kP2CIve5N2b15JTGFxxcF4nsRu8hGzpDBxIMT5U8ab0is3jTuaK/jfAMU8Dn8eoPFIYNCD5bdru17m/x3gq6GmixNN1oSMma+5ajJNb7CIc0+7SDv3qObvrnC1od8qeiBW0oySwJwPcPK9sTfG4Juag/Ap6r9cbeQrbv5/ijbKsb7ALy62gY0PZzkyavKFcN7N3LuONxfTtbsj+eTvXF3Nohojk+9RonvJqH54QPPWtbNjHBj5c0Hapyjcjide5qnjjaKTHEToS88vSPA1s62Ry0WNX0Z3ao=
+  on:
+    tags: true
+    branches: true
