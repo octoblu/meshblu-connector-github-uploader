@@ -23,7 +23,7 @@ class MeshbluConnectorUploader {
   upload() {
     this.spinner.color = "green"
     this.spinner.text = `Uploading ${this.file}`
-    this.github.repos.getReleaseByTag({ owner: this.githubOwner, repo: this.githubRepository, tag: this.githubRelease }).then(release => {
+    return this.github.repos.getReleaseByTag({ owner: this.githubOwner, repo: this.githubRepository, tag: this.githubRelease }).then(release => {
       const id = release.data.id
       return this.github.repos.uploadAsset({
         owner: this.githubOwner,
