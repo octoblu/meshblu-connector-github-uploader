@@ -27,14 +27,14 @@ const CLI_OPTIONS = [
   {
     names: ["github-slug"],
     type: "string",
-    env: ["MESHBLU_CONNECTOR_GITHUB_SLUG", "TRAVIS_REPO_SLUG"],
+    env: ["MESHBLU_CONNECTOR_GITHUB_SLUG", "TRAVIS_REPO_SLUG", "APPVEYOR_PROJECT_SLUG"],
     help: "Github repo name (e.g. octoblu/meshblu-connector-say-hello)",
     helpArg: "REPO",
   },
   {
     names: ["github-release"],
     type: "string",
-    env: ["MESHBLU_CONNECTOR_UPLOADER_GITHUB_RELEASE", "TRAVIS_BRANCH"],
+    env: ["MESHBLU_CONNECTOR_UPLOADER_GITHUB_RELEASE", "TRAVIS_BRANCH", "APPVEYOR_REPO_TAG_NAME", "APPVEYOR_REPO_BRANCH"],
     help: "Github release to upload assets to",
     helpArg: "RELEASE",
   },
