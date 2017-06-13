@@ -27,7 +27,7 @@ const CLI_OPTIONS = [
   {
     names: ["github-slug"],
     type: "string",
-    env: ["MESHBLU_CONNECTOR_GITHUB_SLUG", "TRAVIS_REPO_SLUG", "APPVEYOR_PROJECT_SLUG"],
+    env: ["MESHBLU_CONNECTOR_GITHUB_SLUG", "TRAVIS_REPO_SLUG", "APPVEYOR_REPO_NAME"],
     help: "Github repo name (e.g. octoblu/meshblu-connector-say-hello)",
     helpArg: "REPO",
   },
