@@ -6,7 +6,7 @@ const glob = Promise.promisify(require("glob"))
 class MeshbluConnectorUploader {
   constructor({ installersPath, githubSlug, githubToken, githubRelease, spinner }) {
     this.spinner = spinner
-    this.installersPath = path.resolve(installersPath)
+    this.installersPath = installersPath
     this.githubSlug = githubSlug
     const [githubOwner, githubRepository] = this.githubSlug.split("/")
     this.githubOwner = githubOwner

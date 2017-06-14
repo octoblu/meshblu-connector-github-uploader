@@ -5,6 +5,17 @@ const chalk = require("chalk")
 const ora = require("ora")
 const { MeshbluConnectorUploader } = require("./src/uploader")
 
+function getTarget() {
+  let { arch, platform } = process
+  if (platform === "darwin") platform = "macos"
+  if (platform === "win32") platform = "win"
+  if (arch === "ia32") arch = "x86"
+  if (arch === "arm") arch = "armv7"
+
+  const nodeVersion = "8"
+  return `node${nodeVersion}-${platform}-${arch}`
+}
+
 const CLI_OPTIONS = [
   {
     name: "version",
@@ -22,7 +33,7 @@ const CLI_OPTIONS = [
     env: "MESHBLU_CONNECTOR_INSTALLERS_PATH",
     help: "Path with installers",
     helpArg: "PATH",
-    default: path.join("deploy", "installers"),
+    default: path.join("deploy", getTarget(), "installers"),
   },
   {
     names: ["github-slug"],
@@ -98,7 +109,7 @@ class MeshbluConnectorUploaderCommand {
     const spinner = ora("Starting upload").start()
 
     const uploader = new MeshbluConnectorUploader({
-      installersPath: installers_path,
+      installersPath: path.resolve(installers_path),
       githubToken: github_token,
       githubRelease: github_release,
       githubSlug: github_slug,
