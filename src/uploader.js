@@ -30,8 +30,51 @@ class MeshbluConnectorUploader {
     return this.github.repos.getReleaseByTag({ owner: this.githubOwner, repo: this.githubRepository, tag: this.githubRelease }).then(release => {
       const id = release.data.id
       return glob(path.join(this.installersPath, "*"), { nodir: true }).each(file => {
+        return this.ensureFile({ id, file })
+      })
+    })
+  }
+
+  ensureFile({ id, file }) {
+    return this.getAssetId({
+      file: file,
+      id: id,
+    })
+      .then(assetId => {
+        if (assetId == null) {
+          return Promise.resolve()
+        }
+        return this.deleteAsset({ assetId, id })
+      })
+      .then(() => {
         return this.uploadFile({ id, file })
       })
+  }
+
+  getAssetId({ id, file }) {
+    return this.github.repos
+      .getAssets({
+        owner: this.githubOwner,
+        repo: this.githubRepository,
+        id: id,
+      })
+      .then(response => {
+        const assets = response.data
+        let assetId = null
+        assets.forEach(asset => {
+          if (asset.name == path.basename(file)) {
+            assetId = asset.id
+          }
+        })
+        return Promise.resolve(assetId)
+      })
+  }
+
+  deleteAsset({ assetId }) {
+    return this.github.repos.deleteAsset({
+      owner: this.githubOwner,
+      repo: this.githubRepository,
+      id: assetId,
     })
   }
 
